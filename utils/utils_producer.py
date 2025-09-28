@@ -32,6 +32,8 @@ from utils.utils_logger import logger
 
 DEFAULT_KAFKA_BROKER_ADDRESS = "localhost:9092"
 
+DEFAULT_KAFKA_TOPIC = "buzzline_hanson"
+
 #####################################
 # Helper Functions
 #####################################
@@ -218,6 +220,18 @@ def clear_kafka_topic(topic_name: str, group_id: Optional[str] = None):
         logger.error(f"Error clearing topic '{topic_name}': {e}")
     finally:
         admin_client.close()
+
+# adding is_topic_available function to make kafka consumer code work
+def is_topic_available(topic: str=DEFAULT_KAFKA_TOPIC) -> bool:
+    """
+    Check if a Kafka topic is available. Call create_kafka_topic(), returns True if available.
+    """
+    try:
+        create_kafka_topic(topic)
+        return True
+    except Exception as e:
+        logger.error(f"Error checking topic availability for '{topic}': {e}")
+        return False
 
 
 #####################################
