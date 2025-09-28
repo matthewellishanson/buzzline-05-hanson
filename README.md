@@ -1,27 +1,33 @@
-# buzzline-05-case
+# Buzzline-05-hanson
 
-Nearly every streaming analytics system stores processed data somewhere for further analysis, historical reference, or integration with BI tools.
+This project streams JSON messages from a Kafka topic buzzline_hanson, then consumes and stores them in a sqlite3 database in real time. 
 
-In this example project, we incorporate relational data stores. 
-We stream data into SQLite and DuckDB, but these examples can be altered to work with MySQL, PostgreSQL, MongoDB, and more.
+New consumer: <https://github.com/matthewellishanson/buzzline-05-hanson/blob/main/consumers/consumer_hanson.py>
 
-We use one producer that can write up to four different sinks:
+## Running the Producer
 
-- to a file
-- to a Kafka topic (set in .env)
-- to a SQLite database
-- to a DuckDB database
+The provided producer script streams messages to Kafka. To run it without modifications:
 
-In data pipelines:
+```# Activate your virtual environment first
+# Windows
+py -m producers.producer_case
 
-- A **source** generates records (our message generator). 
-- A **sink** stores or forwards them (file, Kafka, SQLite, DuckDB). 
-- An **emitter** is a small function that takes data from a source and writes it into a sink. 
-- Each emitter has one job (`emit_message` to the specified sink). 
+# Mac/Linux
+python3 -m producers.producer_case
+```
 
-Explore the code to see which aspects are common to all sinks and which parts are unique.
+Note: Make sure Kafka is running locally on **127.0.0.1:9092** and the topic **buzzline_hanson** exists. The producer will create it automatically if needed.
 
---- 
+## Running the New Consumer
+
+To run the consumer_hanson script and track keyword counts:
+
+```# Windows
+py -m consumers.consumer_hanson
+
+# Mac/Linux
+python3 -m consumers.consumer_hanson
+```
 
 ## First, Use Tools from Module 1 and 2
 
