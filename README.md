@@ -1,6 +1,6 @@
 # Buzzline-05-hanson
 
-This project streams JSON messages from a Kafka topic buzzline_hanson, then consumes and stores them in a sqlite3 database in real time. 
+This project streams JSON messages from a Kafka topic buzzline_hanson, then consumes and stores them in a sqlite3 database in real time.
 
 New consumer: <https://github.com/matthewellishanson/buzzline-05-hanson/blob/main/consumers/consumer_hanson.py>
 
@@ -41,8 +41,8 @@ Before starting, ensure you have completed the setup tasks in <https://github.co
 2. Name it `buzzline-05-yourname` where yourname is something unique to you.
 
 Additional information about our standard professional Python project workflow is available at
-<https://github.com/denisecase/pro-analytics-01>. 
-    
+<https://github.com/denisecase/pro-analytics-01>.
+
 ---
 
 ## Task 0. If Windows, Start WSL
@@ -78,7 +78,7 @@ bin/kafka-server-start.sh config/kraft/server.properties
 
 **Keep this terminal open!** Kafka is running and needs to stay active.
 
-For detailed instructions, see [SETUP_KAFKA](https://github.com/denisecase/buzzline-02-case/blob/main/SETUP_KAFKA.md) from Project 2. 
+For detailed instructions, see [SETUP_KAFKA](https://github.com/denisecase/buzzline-02-case/blob/main/SETUP_KAFKA.md) from Project 2.
 
 ---
 
@@ -88,13 +88,13 @@ Open your project in VS Code and use the commands for your operating system to:
 
 1. Create a Python virtual environment.
 2. Activate the virtual environment.
-3. Upgrade pip and key tools. 
+3. Upgrade pip and key tools.
 4. Install from requirements.txt.
 
 ### Windows
 
 Open a new PowerShell terminal in VS Code (Terminal / New Terminal / PowerShell).
-**Python 3.11** is required for Apache Kafka. 
+**Python 3.11** is required for Apache Kafka.
 
 ```powershell
 py -3.11 -m venv .venv
@@ -121,14 +121,14 @@ python3 -m pip install --upgrade -r requirements.txt
 
 ## Task 3. Run Tests and Verify Emitters
 
-In the same terminal used for Task 2, we'll run some tests to ensure that all four emitters are working fine on your machine.  All tests should pass if everything is installed and set up correctly. 
+In the same terminal used for Task 2, we'll run some tests to ensure that all four emitters are working fine on your machine.  All tests should pass if everything is installed and set up correctly.
 
 ```shell
 pytest -v
 ```
 
-Then run the `verify_emitters.py` script as a module to check that we can emit to all four types. 
-For the Kakfa sink to work, the Kafka service must be running. 
+Then run the `verify_emitters.py` script as a module to check that we can emit to all four types.
+For the Kakfa sink to work, the Kafka service must be running.
 
 ### Windows Powershell
 
@@ -148,19 +148,19 @@ python3 -m verify_emitters
 
 This will take two terminals:
 
-1. One to run the producer which writes messages using various emitters. 
-2. Another to run each consumer. 
+1. One to run the producer which writes messages using various emitters.
+2. Another to run each consumer.
 
 ### Producer Terminal (Outputs to Various Sinks)
 
-Start the producer to generate the messages. 
+Start the producer to generate the messages.
 
 The existing producer writes messages to a live data file in the data folder.
 If the Kafka service is running, it will try to write the messages to a Kafka topic as well.
-For configuration details, see the .env file. 
+For configuration details, see the .env file.
 
 In VS Code, open a NEW terminal.
-Use the commands below to activate .venv, and start the producer. 
+Use the commands below to activate .venv, and start the producer.
 
 Windows:
 
@@ -179,16 +179,16 @@ NOTE: The producer will still work if the Kafka service is not available.
 
 ### Consumer Terminal (Various Options)
 
-Start an associated consumer. 
-You have options. 
+Start an associated consumer.
+You have options.
 
 1. Start the consumer that reads from the live data file.
 2. Start the consumer that reads from the Kafka topic.
-3. Start the consumer that reads from the SQLite relational data store. 
+3. Start the consumer that reads from the SQLite relational data store.
 4. Start the consumer that reads from the DuckDB relational data store.
 
-In VS Code, open a NEW terminal in your root project folder. 
-Use the commands below to activate .venv, and start the consumer. 
+In VS Code, open a NEW terminal in your root project folder.
+Use the commands below to activate .venv, and start the consumer.
 
 Windows:
 ```shell
@@ -218,15 +218,15 @@ python3 -m consumers.duckdb_consumer_case.py
 
 ## Review the Project Code
 
-Review the requirements.txt file. 
+Review the requirements.txt file.
 - What - if any - new requirements do we need for this project?
-- Note that requirements.txt now lists both kafka-python and six. 
+- Note that requirements.txt now lists both kafka-python and six.
 - What are some common dependencies as we incorporate data stores into our streaming pipelines?
 
 Review the .env file with the environment variables.
 - Why is it helpful to put some settings in a text file?
-- As we add database access and passwords, we start to keep two versions: 
-   - .env 
+- As we add database access and passwords, we start to keep two versions:
+   - .env
    - .env.example
  - Read the notes in those files - which one is typically NOT added to source control?
  - How do we ignore a file so it doesn't get published in GitHub (hint: .gitignore)
@@ -242,7 +242,7 @@ Compare the consumer that reads from a live data file and the consumer that read
 - Which functions are the same for both?
 - Which parts are different?
 
-What files are in the utils folder? 
+What files are in the utils folder?
 - Why bother breaking functions out into utility modules?
 - Would similar streaming projects be likely to take advantage of any of these files?
 
@@ -254,9 +254,9 @@ What files are in the producers folder?
 What files are in the consumers folder?
 - This is where the processing and storage takes place.
 - Why did we make a separate file for reading from the live data file vs reading from the Kafka file?
-- What functions are in each? 
-- Are any of the functions duplicated? 
-- Can you refactor the project so we could write a duplicated function just once and reuse it? 
+- What functions are in each?
+- Are any of the functions duplicated?
+- Can you refactor the project so we could write a duplicated function just once and reuse it?
 - What functions are in the sqlite script?
 - What functions might be needed to initialize a different kind of data store?
 - What functions might be needed to insert a message into a different kind of data store?
@@ -266,9 +266,9 @@ What files are in the consumers folder?
 ## Explorations
 
 - Did you run the kafka consumer or the live file consumer? Why?
-- Can you use the examples to add a database to your own streaming applications? 
+- Can you use the examples to add a database to your own streaming applications?
 - What parts are most interesting to you?
-- What parts are most challenging? 
+- What parts are most challenging?
 
 ---
 
@@ -311,8 +311,8 @@ To kill the terminal, hit CTRL c (hold both CTRL key and c key down at the same 
 
 When resuming work on this project:
 
-1. Open the project repository folder in VS Code. 
-2. Start the Kafka service (use WSL if Windows) and keep the terminal running. 
+1. Open the project repository folder in VS Code.
+2. Start the Kafka service (use WSL if Windows) and keep the terminal running.
 3. Activate your local project virtual environment (.venv) in your OS-specific terminal.
 4. Run `git pull` to get any changes made from the remote repo (on GitHub).
 
