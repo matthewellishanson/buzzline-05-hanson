@@ -4,6 +4,10 @@ This project streams JSON messages from a Kafka topic buzzline_hanson, then cons
 
 New consumer: <https://github.com/matthewellishanson/buzzline-05-hanson/blob/main/consumers/consumer_hanson.py>
 
+## Buzzline-06-hanson
+
+Part 2 of this project will continue the focus on sentiment scores by author by averaging the scores per author and visualizing their continuously evolving mean scores.
+
 ## Running the Producer
 
 The provided producer script streams messages to Kafka. To run it without modifications:
