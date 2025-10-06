@@ -108,6 +108,9 @@ numpy
 # Data manipulation and analysis (built on numpy, 10-20 MB)
 pandas
 
+# Data visualization (built on matplotlib, 10-20 MB)
+matplotlib
+
 # ======================================================
 # KAFKA STREAMING MESSAGE BROKER INTEGRATION
 # ======================================================

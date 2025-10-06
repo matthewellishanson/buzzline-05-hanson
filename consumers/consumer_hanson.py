@@ -30,6 +30,7 @@ import os
 import pathlib
 import sys
 import sqlite3
+import matplotlib.pyplot as plt
 
 # import external modules
 from kafka import KafkaConsumer
@@ -38,6 +39,7 @@ from kafka import KafkaConsumer
 from utils.utils_consumer import create_kafka_consumer
 from utils.utils_logger import logger
 from utils.utils_producer import verify_services, is_topic_available
+from collections import defaultdict
 
 ######################################
 # PATHS
@@ -71,8 +73,9 @@ def init_db(db_path: pathlib.Path) -> None:
         """
         CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            author TEXT,
-            sentiment REAL
+            author TEXT UNIQUE,
+            num_messages INTEGER DEFAULT 0,
+            average_sentiment REAL DEFAULT 0.0
         )
         """
     )
@@ -81,48 +84,87 @@ def init_db(db_path: pathlib.Path) -> None:
 
 #####################################
 # Update sentiment by author
-######################################
+#####################################
 
 def update_sentiment_by_author(author: str, sentiment: float, db_path: pathlib.Path) -> None:
-    """Update the sentiment score for a given author in the database."""
+    """Update the message count and average sentiment for a given author in the database."""
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
+
+    # Check if author exists
     cursor.execute(
-        """
-        INSERT INTO messages (author, sentiment)
-        VALUES (?, ?)
-        """,
-        (author, sentiment),
+        "SELECT num_messages, average_sentiment FROM messages WHERE author = ?",
+        (author,),
     )
+    row = cursor.fetchone()
+
+    if row:
+        num_messages, avg_sentiment = row
+        new_num_messages = num_messages + 1
+        new_avg_sentiment = ((avg_sentiment * num_messages) + sentiment) / new_num_messages
+        cursor.execute(
+            """
+            UPDATE messages
+            SET num_messages = ?, average_sentiment = ?
+            WHERE author = ?
+            """,
+            (new_num_messages, new_avg_sentiment, author),
+        )
+    else:
+        cursor.execute(
+            """
+            INSERT INTO messages (author, num_messages, average_sentiment)
+            VALUES (?, ?, ?)
+            """,
+            (author, 1, sentiment),
+        )
+
     conn.commit()
     conn.close()
 
 #####################################
 # Function to process a single message
-# #####################################
+#####################################
+
+
+
+# Global state for live chart
+author_sentiments = defaultdict(float)
+author_counts = defaultdict(int)
+plt.ion()
+fig, ax = plt.subplots()
+bars = None
+
+def update_live_chart():
+    authors = list(author_sentiments.keys())
+    sentiments = [author_sentiments[a] / author_counts[a] for a in authors]
+    ax.clear()
+    ax.bar(authors, sentiments, color='skyblue')
+    ax.set_ylabel('Average Sentiment')
+    ax.set_xlabel('Author')
+    ax.set_title('Live Average Sentiment by Author')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.pause(0.01)
 
 def process_message(message: dict) -> None:
     """
     Process and transform a single JSON message.
-    Converts message fields to appropriate data types.
+    Updates sentiment by author and updates live chart.
 
     Args:
         message (dict): The JSON message as a Python dictionary.
     """
-    processed_message = {
-        "message": message.get("message"),
-        "author": message.get("author"),
-        "timestamp": message.get("timestamp"),
-        "category": message.get("category"),
-        "sentiment": float(message.get("sentiment", 0.0)),
-        "keyword_mentioned": message.get("keyword_mentioned"),
-        "message_length": int(message.get("message_length", 0)),
-    }
+    author = message.get("author")
+    sentiment = float(message.get("sentiment", 0.0))
 
-    update_sentiment_by_author(
-        processed_message["author"], processed_message["sentiment"], SQLITE_PATH
-    )
+    update_sentiment_by_author(author, sentiment, SQLITE_PATH)
+
+    # Update in-memory stats for live chart
+    author_sentiments[author] += sentiment
+    author_counts[author] += 1
+    update_live_chart()
 
 
 
